@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/labstack/echo/middleware"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/sako0/todo-api/app/config"
 	"github.com/sako0/todo-api/app/infra"
 	todo "github.com/sako0/todo-api/app/infra/persistence/todo"
