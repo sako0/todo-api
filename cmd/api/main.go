@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/labstack/echo/middleware"
 	"github.com/labstack/echo/v4"
 	"github.com/sako0/todo-api/app/config"
 	"github.com/sako0/todo-api/app/infra"
@@ -15,6 +16,7 @@ import (
 func main() {
 	// Echo instance
 	e := echo.New()
+	e.Use(middleware.CORS())
 	e.Validator = validator.NewValidator()
 	// 設定読み込み
 	cfg, err := config.LoadConfig()
