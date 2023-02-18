@@ -3,6 +3,7 @@ package usecase
 import (
 	"fmt"
 
+	"github.com/sako0/todo-api/app/domain/model"
 	"github.com/sako0/todo-api/app/domain/repository"
 )
 
@@ -21,4 +22,10 @@ func (tu TodoUsecase) PostTodo(text string) error {
 		return err
 	}
 	return nil
+}
+
+func (tu TodoUsecase) ListTodo() []model.Todo {
+	todos := tu.todoRepository.ListTodo()
+
+	return todos
 }

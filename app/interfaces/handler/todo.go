@@ -10,6 +10,7 @@ import (
 
 type TodoHandler interface {
 	PostTodo(c echo.Context) error
+	ListTodo(c echo.Context) error
 }
 
 type todoHandler struct {
@@ -37,4 +38,13 @@ func (th todoHandler) PostTodo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, "success")
+}
+
+func (th todoHandler) ListTodo(c echo.Context) error {
+
+	todos := th.todoUsecase.ListTodo()
+	if len(todos) == 0 {
+		return c.JSON(http.StatusInternalServerError, "レコードがありません")
+	}
+	return c.JSON(http.StatusOK, todos)
 }

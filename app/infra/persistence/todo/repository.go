@@ -19,3 +19,10 @@ func (tr todoRepository) PostTodo(text string) error {
 	_ = tr.Conn.Create(&model.Todo{Text: text})
 	return nil
 }
+
+func (tr todoRepository) ListTodo() []model.Todo {
+	var users []model.Todo
+	db := tr.Conn
+	db.Find(&users)
+	return users
+}

@@ -33,6 +33,9 @@ func main() {
 
 	// todoリストの更新
 	e.POST("/todo", th.PostTodo)
+	// todoリストをすべて表示する
+	e.GET("/todos", th.ListTodo)
+
 	// Start server
 	e.Logger.Fatal(e.Start(":5000"))
 }
