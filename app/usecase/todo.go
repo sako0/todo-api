@@ -29,3 +29,9 @@ func (tu TodoUsecase) ListTodo() []model.Todo {
 
 	return todos
 }
+
+func (tu TodoUsecase) DeleteTodo(id uint) error {
+	err := tu.todoRepository.DeleteTodo(id)
+
+	return err
+}

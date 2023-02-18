@@ -26,3 +26,9 @@ func (tr todoRepository) ListTodo() []model.Todo {
 	db.Find(&users)
 	return users
 }
+
+func (tr todoRepository) DeleteTodo(id uint) error {
+	db := tr.Conn
+	db.Delete(&model.Todo{}, id)
+	return nil
+}

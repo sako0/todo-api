@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -11,6 +12,7 @@ import (
 type TodoHandler interface {
 	PostTodo(c echo.Context) error
 	ListTodo(c echo.Context) error
+	DeleteTodo(c echo.Context) error
 }
 
 type todoHandler struct {
@@ -47,4 +49,16 @@ func (th todoHandler) ListTodo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, "レコードがありません")
 	}
 	return c.JSON(http.StatusOK, todos)
+}
+
+func (th todoHandler) DeleteTodo(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	err = th.todoUsecase.DeleteTodo(uint(id))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, "success")
 }

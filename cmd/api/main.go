@@ -35,6 +35,8 @@ func main() {
 	e.POST("/todo", th.PostTodo)
 	// todoリストをすべて表示する
 	e.GET("/todos", th.ListTodo)
+	// todoリストを削除する
+	e.DELETE("/todo/:id", th.DeleteTodo)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":5000"))
