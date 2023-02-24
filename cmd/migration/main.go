@@ -14,6 +14,15 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	migration(cfg)
+	cfg, err = config.LoadTestConfig()
+	if err != nil {
+		fmt.Println(err)
+	}
+	migration(cfg)
+}
+
+func migration(cfg *config.AppConfig) {
 	// データベース接続
 	db, err := infra.NewSQLConnection(cfg.AppInfo.DatabaseURL)
 	if err != nil {
