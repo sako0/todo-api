@@ -29,6 +29,16 @@ type updateTodoTextRequest struct {
 	Text string `json:"text" validate:"required"`
 }
 
+type getTodoByIdResponse struct {
+	ID   uint   `json:"id"`
+	Text string `json:"text"`
+}
+
+type listTodoResponse struct {
+	ID   uint   `json:"id"`
+	Text string `json:"text"`
+}
+
 func NewTodoHandler(usecase usecase.TodoUsecase) TodoHandler {
 	return &todoHandler{todoUsecase: usecase}
 }
@@ -57,16 +67,23 @@ func (th todoHandler) GetTodoById(c echo.Context) error {
 	if todo.ID == 0 {
 		return c.JSON(http.StatusInternalServerError, "レコードがありません")
 	}
-	return c.JSON(http.StatusOK, todo)
+	// レスポンスの構造体を定義して返す
+	res := getTodoByIdResponse{ID: todo.ID, Text: todo.Text}
+	return c.JSON(http.StatusOK, res)
 }
 
 func (th todoHandler) ListTodo(c echo.Context) error {
 
 	todos := th.todoUsecase.ListTodo()
+	// レスポンスの構造体を定義して返す
+	res := make([]listTodoResponse, len(todos))
 	if len(todos) == 0 {
-		return c.JSON(http.StatusInternalServerError, "レコードがありません")
+		return c.JSON(http.StatusOK, res)
 	}
-	return c.JSON(http.StatusOK, todos)
+	for i, todo := range todos {
+		res[i] = listTodoResponse{ID: todo.ID, Text: todo.Text}
+	}
+	return c.JSON(http.StatusOK, res)
 }
 
 func (th todoHandler) DeleteTodo(c echo.Context) error {
