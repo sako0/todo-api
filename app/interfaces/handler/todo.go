@@ -75,11 +75,11 @@ func (th todoHandler) GetTodoById(c echo.Context) error {
 func (th todoHandler) ListTodo(c echo.Context) error {
 
 	todos := th.todoUsecase.ListTodo()
-	if len(todos) == 0 {
-		return c.JSON(http.StatusInternalServerError, "レコードがありません")
-	}
 	// レスポンスの構造体を定義して返す
 	res := make([]listTodoResponse, len(todos))
+	if len(todos) == 0 {
+		return c.JSON(http.StatusOK, res)
+	}
 	for i, todo := range todos {
 		res[i] = listTodoResponse{ID: todo.ID, Text: todo.Text}
 	}
