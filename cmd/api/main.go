@@ -35,6 +35,8 @@ func main() {
 
 	// todoリストの更新
 	e.POST("/todo", th.PostTodo)
+	// todoリストを1つ表示する
+	e.GET("/todo/:id", th.GetTodoById)
 	// todoリストをすべて表示する
 	e.GET("/todos", th.ListTodo)
 	// todoリストを削除する

@@ -41,4 +41,7 @@ func TestTodoRepository(t *testing.T) {
 	t.Run("UpdateTodoText", func(t *testing.T) {
 		repo.UpdateTodoText(1, "test")
 	})
+	t.Run("GetTodoById", func(t *testing.T) {
+		repo.GetTodoById(1)
+	})
 }

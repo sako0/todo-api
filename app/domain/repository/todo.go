@@ -7,4 +7,5 @@ type TodoRepository interface {
 	ListTodo() []model.Todo
 	DeleteTodo(id uint) error
 	UpdateTodoText(id uint, text string) error
+	GetTodoById(id uint) model.Todo
 }
