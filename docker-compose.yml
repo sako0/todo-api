@@ -9,6 +9,7 @@ services:
       MYSQL_USER: 'root'
       MYSQL_PASSWORD: 'pass'
       MYSQL_DATABASE: 'go_development'
+      MYSQL_TEST_DATABASE: 'go_test'
       MYSQL_HOST: 'db'
       MYSQL_PORT: '3306'
     ports:
