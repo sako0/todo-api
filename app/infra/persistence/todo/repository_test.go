@@ -38,4 +38,7 @@ func TestTodoRepository(t *testing.T) {
 	t.Run("DeleteTodo", func(t *testing.T) {
 		repo.DeleteTodo(1)
 	})
+	t.Run("UpdateTodoText", func(t *testing.T) {
+		repo.UpdateTodoText(1, "test")
+	})
 }

@@ -35,3 +35,9 @@ func (tu TodoUsecase) DeleteTodo(id uint) error {
 
 	return err
 }
+
+func (tu TodoUsecase) UpdateTodoText(id uint, text string) error {
+	err := tu.todoRepository.UpdateTodoText(id, text)
+
+	return err
+}

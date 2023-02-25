@@ -13,6 +13,7 @@ type TodoHandler interface {
 	PostTodo(c echo.Context) error
 	ListTodo(c echo.Context) error
 	DeleteTodo(c echo.Context) error
+	UpdateTodoText(c echo.Context) error
 }
 
 type todoHandler struct {
@@ -20,6 +21,10 @@ type todoHandler struct {
 }
 
 type postTodoRequest struct {
+	Text string `json:"text" validate:"required"`
+}
+
+type updateTodoTextRequest struct {
 	Text string `json:"text" validate:"required"`
 }
 
@@ -57,6 +62,25 @@ func (th todoHandler) DeleteTodo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	err = th.todoUsecase.DeleteTodo(uint(id))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, "success")
+}
+
+func (th todoHandler) UpdateTodoText(c echo.Context) error {
+	r := &updateTodoTextRequest{}
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if err := c.Bind(r); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if err := c.Validate(r); err != nil {
+		return c.JSON(http.StatusBadRequest, err.(validator.ValidationErrors).Error())
+	}
+	err = th.todoUsecase.UpdateTodoText(uint(id), r.Text)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
