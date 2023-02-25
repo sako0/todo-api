@@ -32,3 +32,9 @@ func (tr todoRepository) DeleteTodo(id uint) error {
 	db.Delete(&model.Todo{}, id)
 	return nil
 }
+
+func (tr todoRepository) UpdateTodoText(id uint, text string) error {
+	db := tr.Conn
+	db.Model(&model.Todo{}).Where("id = ?", id).Update("text", text)
+	return nil
+}
