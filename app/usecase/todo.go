@@ -41,3 +41,9 @@ func (tu TodoUsecase) UpdateTodoText(id uint, text string) error {
 
 	return err
 }
+
+func (tu TodoUsecase) GetTodoById(id uint) model.Todo {
+	todo := tu.todoRepository.GetTodoById(id)
+
+	return todo
+}

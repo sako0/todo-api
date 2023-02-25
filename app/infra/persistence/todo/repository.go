@@ -38,3 +38,10 @@ func (tr todoRepository) UpdateTodoText(id uint, text string) error {
 	db.Model(&model.Todo{}).Where("id = ?", id).Update("text", text)
 	return nil
 }
+
+func (tr todoRepository) GetTodoById(id uint) model.Todo {
+	var todo model.Todo
+	db := tr.Conn
+	db.First(&todo, id)
+	return todo
+}

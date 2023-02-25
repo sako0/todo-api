@@ -11,6 +11,7 @@ import (
 
 type TodoHandler interface {
 	PostTodo(c echo.Context) error
+	GetTodoById(c echo.Context) error
 	ListTodo(c echo.Context) error
 	DeleteTodo(c echo.Context) error
 	UpdateTodoText(c echo.Context) error
@@ -45,6 +46,18 @@ func (th todoHandler) PostTodo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, "success")
+}
+
+func (th todoHandler) GetTodoById(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	todo := th.todoUsecase.GetTodoById(uint(id))
+	if todo.ID == 0 {
+		return c.JSON(http.StatusInternalServerError, "レコードがありません")
+	}
+	return c.JSON(http.StatusOK, todo)
 }
 
 func (th todoHandler) ListTodo(c echo.Context) error {
