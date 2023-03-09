@@ -1,13 +1,11 @@
 package infra
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/sako0/todo-api/app/config"
 	"github.com/sako0/todo-api/app/domain/model"
 	"github.com/sako0/todo-api/app/infra"
-	"gorm.io/gorm"
 )
 
 // テストコード
@@ -15,33 +13,71 @@ func TestTodoRepository(t *testing.T) {
 	// 設定読み込み
 	cfg, err := config.LoadTestConfig()
 	if err != nil {
-		fmt.Println(err)
+		t.Fatalf("failed to load test config: %v", err)
 	}
+
 	// データベース接続
 	db, err := infra.NewSQLConnection(cfg.AppInfo.DatabaseURL)
 	if err != nil {
-		panic("failed to connect database")
+		t.Fatalf("failed to connect database: %v", err)
 	}
-	db.AutoMigrate(&model.Todo{
-		Model: gorm.Model{},
-		Text:  "",
-	})
+	// dbにすでにテーブルがある場合は削除する
+	db.Migrator().DropTable(&model.Todo{})
+	// dbにテーブルを作成する
+	db.AutoMigrate(&model.Todo{})
+
 	repo := NewTodoRepository(db)
 
 	// テストケース
 	t.Run("PostTodo", func(t *testing.T) {
-		repo.PostTodo("test")
+
+		todoList := repo.ListTodo()
+		if len(todoList) > 0 {
+			for _, todo := range todoList {
+				repo.DeleteTodo(todo.ID)
+			}
+		}
+		err := repo.PostTodo("test")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 	})
+
 	t.Run("ListTodo", func(t *testing.T) {
-		repo.ListTodo()
+		todoList := repo.ListTodo()
+		if len(todoList) != 1 {
+			t.Fatalf("unexpected length of todo list: %d", len(todoList))
+		}
 	})
-	t.Run("DeleteTodo", func(t *testing.T) {
-		repo.DeleteTodo(1)
-	})
-	t.Run("UpdateTodoText", func(t *testing.T) {
-		repo.UpdateTodoText(1, "test")
-	})
+
 	t.Run("GetTodoById", func(t *testing.T) {
-		repo.GetTodoById(1)
+		todo := repo.GetTodoById(1)
+		if todo.ID != 1 || todo.Text != "test" {
+			t.Fatalf("unexpected todo: %+v", todo)
+		}
+	})
+
+	t.Run("UpdateTodoText", func(t *testing.T) {
+		err := repo.UpdateTodoText(1, "updated")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		todo := repo.GetTodoById(1)
+		if todo.Text != "updated" {
+			t.Fatalf("unexpected todo text: %s", todo.Text)
+		}
+	})
+
+	t.Run("DeleteTodo", func(t *testing.T) {
+		err := repo.DeleteTodo(1)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		todoList := repo.ListTodo()
+		if len(todoList) != 0 {
+			t.Fatalf("unexpected length of todo list: %d", len(todoList))
+		}
 	})
 }
