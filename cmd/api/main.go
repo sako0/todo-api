@@ -7,9 +7,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sako0/todo-api/app/config"
 	"github.com/sako0/todo-api/app/infra"
-	todo "github.com/sako0/todo-api/app/infra/persistence/todo"
-	handler "github.com/sako0/todo-api/app/interfaces/handler"
-	validator "github.com/sako0/todo-api/app/interfaces/validator"
+	todo "github.com/sako0/todo-api/app/infra/mysql/todo"
+	handler "github.com/sako0/todo-api/app/interfaces/rest"
+	validator "github.com/sako0/todo-api/app/interfaces/rest"
 	"github.com/sako0/todo-api/app/usecase"
 )
 
@@ -31,7 +31,7 @@ func main() {
 
 	tr := todo.NewTodoRepository(db)
 	tu := usecase.NewTodoUsecase(tr)
-	th := handler.NewTodoHandler(*tu)
+	th := handler.NewTodoHandler(tu)
 
 	// todoリストの更新
 	e.POST("/todo", th.PostTodo)

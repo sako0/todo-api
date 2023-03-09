@@ -1,4 +1,4 @@
-package interfaces
+package rest
 
 import (
 	"net/http"
@@ -43,7 +43,7 @@ func NewTodoHandler(usecase usecase.TodoUsecase) TodoHandler {
 	return &todoHandler{todoUsecase: usecase}
 }
 
-func (th todoHandler) PostTodo(c echo.Context) error {
+func (th *todoHandler) PostTodo(c echo.Context) error {
 	r := &postTodoRequest{}
 	if err := c.Bind(r); err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -58,7 +58,7 @@ func (th todoHandler) PostTodo(c echo.Context) error {
 	return c.JSON(http.StatusOK, "success")
 }
 
-func (th todoHandler) GetTodoById(c echo.Context) error {
+func (th *todoHandler) GetTodoById(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -72,7 +72,7 @@ func (th todoHandler) GetTodoById(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-func (th todoHandler) ListTodo(c echo.Context) error {
+func (th *todoHandler) ListTodo(c echo.Context) error {
 
 	todos := th.todoUsecase.ListTodo()
 	// レスポンスの構造体を定義して返す
@@ -86,7 +86,7 @@ func (th todoHandler) ListTodo(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-func (th todoHandler) DeleteTodo(c echo.Context) error {
+func (th *todoHandler) DeleteTodo(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
