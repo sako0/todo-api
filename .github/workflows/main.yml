@@ -26,7 +26,7 @@ jobs:
           MYSQL_PASSWORD: pass
           MYSQL_DATABASE: go_development
           MYSQL_TEST_DATABASE: go_test
-          MYSQL_HOST: localhost
+          MYSQL_HOST: 127.0.0.1
           MYSQL_PORT: 3306
         uses: actions/setup-go@v2
         with:
@@ -40,6 +40,6 @@ jobs:
           MYSQL_PASSWORD: pass
           MYSQL_DATABASE: go_development
           MYSQL_TEST_DATABASE: go_test
-          MYSQL_HOST: localhost
+          MYSQL_HOST: 127.0.0.1
           MYSQL_PORT: 3306
         run: docker run go-app sh -c "make migrate-up && make test"
