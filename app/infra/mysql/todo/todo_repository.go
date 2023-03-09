@@ -16,8 +16,8 @@ func NewTodoRepository(conn *gorm.DB) repository.TodoRepository {
 }
 
 func (tr todoRepository) PostTodo(text string) error {
-	_ = tr.Conn.Create(&model.Todo{Text: text})
-	return nil
+	tx := tr.Conn.Create(&model.Todo{Text: text})
+	return tx.Error
 }
 
 func (tr todoRepository) ListTodo() []model.Todo {

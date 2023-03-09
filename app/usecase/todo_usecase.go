@@ -11,8 +11,8 @@ type TodoUsecase struct {
 	todoRepository repository.TodoRepository
 }
 
-func NewTodoUsecase(tr repository.TodoRepository) *TodoUsecase {
-	return &TodoUsecase{todoRepository: tr}
+func NewTodoUsecase(tr repository.TodoRepository) TodoUsecase {
+	return TodoUsecase{todoRepository: tr}
 }
 
 func (tu TodoUsecase) PostTodo(text string) error {

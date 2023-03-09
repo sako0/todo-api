@@ -13,29 +13,22 @@ type AppInfo struct {
 	DatabaseURL string
 }
 
-func LoadConfig() (*AppConfig, error) {
+func loadDatabaseURL(dbName string) (string, error) {
 	mysqlHost := os.Getenv("MYSQL_HOST")
-	if mysqlHost == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_HOSTが設定されていません")
-	}
 	mysqlUser := os.Getenv("MYSQL_USER")
-	if mysqlUser == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_USERが設定されていません")
-	}
 	mysqlPassword := os.Getenv("MYSQL_PASSWORD")
-	if mysqlPassword == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_PASSWORDが設定されていません")
-	}
-	mysqlDBName := os.Getenv("MYSQL_DATABASE")
-	if mysqlDBName == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_DATABASEが設定されていません")
-	}
 	mysqlPort := os.Getenv("MYSQL_PORT")
-	if mysqlPort == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_PORTが設定されていません")
+	if mysqlHost == "" || mysqlUser == "" || mysqlPassword == "" || mysqlPort == "" {
+		return "", fmt.Errorf("環境変数が不足しています。MYSQL_HOST: %s, MYSQL_USER: %s, MYSQL_PASSWORD: %s, MYSQL_PORT: %s", mysqlHost, mysqlUser, mysqlPassword, mysqlPort)
 	}
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true", mysqlUser, mysqlPassword, mysqlHost, mysqlPort, dbName), nil
+}
 
-	databaseURL := mysqlUser + ":" + mysqlPassword + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/" + mysqlDBName + "?charset=utf8mb4&parseTime=true"
+func LoadConfig() (*AppConfig, error) {
+	databaseURL, err := loadDatabaseURL(os.Getenv("MYSQL_DATABASE"))
+	if err != nil {
+		return nil, err
+	}
 
 	appInfo := &AppInfo{
 		DatabaseURL: databaseURL,
@@ -49,28 +42,10 @@ func LoadConfig() (*AppConfig, error) {
 }
 
 func LoadTestConfig() (*AppConfig, error) {
-	mysqlHost := os.Getenv("MYSQL_HOST")
-	if mysqlHost == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_HOSTが設定されていません")
+	databaseURL, err := loadDatabaseURL(os.Getenv("MYSQL_TEST_DATABASE"))
+	if err != nil {
+		return nil, err
 	}
-	mysqlUser := os.Getenv("MYSQL_USER")
-	if mysqlUser == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_USERが設定されていません")
-	}
-	mysqlPassword := os.Getenv("MYSQL_PASSWORD")
-	if mysqlPassword == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_PASSWORDが設定されていません")
-	}
-	mysqlDBName := os.Getenv("MYSQL_TEST_DATABASE")
-	if mysqlDBName == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_TEST_DATABASEが設定されていません")
-	}
-	mysqlPort := os.Getenv("MYSQL_PORT")
-	if mysqlPort == "" {
-		return nil, fmt.Errorf("環境変数MYSQL_PORTが設定されていません")
-	}
-
-	databaseURL := mysqlUser + ":" + mysqlPassword + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/" + mysqlDBName + "?charset=utf8mb4&parseTime=true"
 
 	appInfo := &AppInfo{
 		DatabaseURL: databaseURL,

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/sako0/todo-api/app/config"
 	"github.com/sako0/todo-api/app/domain/model"
@@ -9,30 +10,69 @@ import (
 )
 
 func main() {
-	// 設定読み込み
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
-	migration(cfg)
+
+	if len(os.Args) > 1 && os.Args[1] == "down" {
+		err = down(cfg)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		return
+	}
+
+	if err := migrate(cfg); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	cfg, err = config.LoadTestConfig()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
-	migration(cfg)
+
+	if err := migrate(cfg); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
-func migration(cfg *config.AppConfig) {
-	// データベース接続
+func migrate(cfg *config.AppConfig) error {
 	db, err := infra.NewSQLConnection(cfg.AppInfo.DatabaseURL)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	db.AutoMigrate(
-		&model.Todo{},
-	)
-	todo := []model.Todo{{Text: "test"}}
+	err = db.AutoMigrate(&model.Todo{})
+	if err != nil {
+		return err
+	}
 
-	db.Create(&todo)
+	todo := model.Todo{Text: "test"}
+
+	err = db.Create(&todo).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func down(cfg *config.AppConfig) error {
+	db, err := infra.NewSQLConnection(cfg.AppInfo.DatabaseURL)
+	if err != nil {
+		return err
+	}
+
+	err = db.Migrator().DropTable(&model.Todo{})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

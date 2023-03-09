@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	mock "github.com/sako0/todo-api/app/domain/mock"
 	"github.com/sako0/todo-api/app/domain/model"
+	mock "github.com/sako0/todo-api/app/testdata"
 )
 
 func TestTodoUsecase(t *testing.T) {

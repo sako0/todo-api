@@ -1,4 +1,4 @@
-package interfaces
+package rest
 
 import (
 	"github.com/go-playground/validator/v10"
