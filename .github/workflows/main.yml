@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  MYSQL_USER: root
+  MYSQL_PASSWORD: pass
+  MYSQL_DATABASE: go_development
+  MYSQL_TEST_DATABASE: go_test
+  MYSQL_HOST: db
+  MYSQL_PORT: 3306
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,4 +34,4 @@ jobs:
       - name: Build Docker image
         run: docker build -t go-app .
       - name: Test
-        run: docker run --env MYSQL_USER=root --env MYSQL_PASSWORD=pass --env MYSQL_DATABASE=go_development --env MYSQL_TEST_DATABASE=go_test --env MYSQL_HOST=db --env MYSQL_PORT=3306 go-app sh -c "make migrate-up && make test"
+        run: docker run go-app sh -c "make migrate-up && make test"
