@@ -9,6 +9,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: mysql:8.0.28
+        env:
+          MYSQL_ROOT_PASSWORD: pass
+          MYSQL_DATABASE: go_development
+          MYSQL_ROOT_HOST: '%'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Go 1.18
@@ -19,4 +26,11 @@ jobs:
       - name: Build Docker image
         run: docker build -t go-app .
       - name: Test
-        run: docker run go-app sh -c "cd /go/src/app && go build . && make migrate-up && make test"
+        env:
+          MYSQL_USER: root
+          MYSQL_PASSWORD: pass
+          MYSQL_DATABASE: go_development
+          MYSQL_TEST_DATABASE: go_test
+          MYSQL_HOST: db
+          MYSQL_PORT: 3306
+        run: docker run go-app sh -c "make migrate-up && make test"

@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # ホストのファイルをコンテナの作業ディレクトリに移行
-COPY . .
+COPY . /go/src/app
 
 # 依存関係のダウンロードとビルド
 RUN go mod download && go build -o /go/bin/app ./cmd/api
