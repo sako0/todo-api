@@ -33,4 +33,4 @@ jobs:
       - name: Test
         run: docker run -e "MYSQL_USER=root" -e "MYSQL_PASSWORD=pass" -e "MYSQL_DATABASE=go_development" -e "MYSQL_TEST_DATABASE=go_test" -e "MYSQL_HOST=$MYSQL_HOST" -e "MYSQL_PORT=3306" go-app sh -c "make migrate-up && make test"
         env:
-          MYSQL_HOST: localhost
+          MYSQL_HOST: db
