@@ -24,10 +24,10 @@ func (tu TodoUsecase) PostTodo(text string) error {
 	return nil
 }
 
-func (tu TodoUsecase) ListTodo() []model.Todo {
-	todos := tu.todoRepository.ListTodo()
+func (tu TodoUsecase) ListTodo() ([]model.Todo, error) {
+	todos, err := tu.todoRepository.ListTodo()
 
-	return todos
+	return todos, err
 }
 
 func (tu TodoUsecase) DeleteTodo(id uint) error {
@@ -42,8 +42,8 @@ func (tu TodoUsecase) UpdateTodoText(id uint, text string) error {
 	return err
 }
 
-func (tu TodoUsecase) GetTodoById(id uint) model.Todo {
-	todo := tu.todoRepository.GetTodoById(id)
+func (tu TodoUsecase) GetTodoById(id uint) (model.Todo, error) {
+	todo, err := tu.todoRepository.GetTodoById(id)
 
-	return todo
+	return todo, err
 }

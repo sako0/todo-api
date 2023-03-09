@@ -20,11 +20,11 @@ func (tr todoRepository) PostTodo(text string) error {
 	return tx.Error
 }
 
-func (tr todoRepository) ListTodo() []model.Todo {
+func (tr todoRepository) ListTodo() ([]model.Todo, error) {
 	var users []model.Todo
 	db := tr.Conn
-	db.Find(&users)
-	return users
+	tx := db.Find(&users)
+	return users, tx.Error
 }
 
 func (tr todoRepository) DeleteTodo(id uint) error {
@@ -39,9 +39,9 @@ func (tr todoRepository) UpdateTodoText(id uint, text string) error {
 	return nil
 }
 
-func (tr todoRepository) GetTodoById(id uint) model.Todo {
+func (tr todoRepository) GetTodoById(id uint) (model.Todo, error) {
 	var todo model.Todo
 	db := tr.Conn
-	db.First(&todo, id)
-	return todo
+	tx := db.First(&todo, id)
+	return todo, tx.Error
 }

@@ -63,9 +63,12 @@ func (th *todoHandler) GetTodoById(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	todo := th.todoUsecase.GetTodoById(uint(id))
+	todo, err := th.todoUsecase.GetTodoById(uint(id))
 	if todo.ID == 0 {
 		return c.JSON(http.StatusInternalServerError, "レコードがありません")
+	}
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	// レスポンスの構造体を定義して返す
 	res := getTodoByIdResponse{ID: todo.ID, Text: todo.Text}
@@ -74,11 +77,14 @@ func (th *todoHandler) GetTodoById(c echo.Context) error {
 
 func (th *todoHandler) ListTodo(c echo.Context) error {
 
-	todos := th.todoUsecase.ListTodo()
+	todos, err := th.todoUsecase.ListTodo()
 	// レスポンスの構造体を定義して返す
 	res := make([]listTodoResponse, len(todos))
 	if len(todos) == 0 {
 		return c.JSON(http.StatusOK, res)
+	}
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	for i, todo := range todos {
 		res[i] = listTodoResponse{ID: todo.ID, Text: todo.Text}

@@ -5,8 +5,8 @@ import "testing"
 func TestTodo(t *testing.T) {
 	t.Run("IsDone", func(t *testing.T) {
 		todo := Todo{Text: "test"}
-		if todo.IsDone() != true {
-			t.Errorf("todo.IsDone() = %v; want true", todo.IsDone())
+		if got := todo.IsDone(); got != true {
+			t.Errorf("Todo.IsDone() = %v, want true because Text is not empty", got)
 		}
 	})
 }
