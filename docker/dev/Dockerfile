@@ -9,7 +9,7 @@ WORKDIR /go/src/app
 # ModuleモードをON
 ENV GO111MODULE=on
 
-COPY . .
+COPY . /go/src/app
 # 必要な依存関係をインストール
 RUN apt-get update && apt-get install -y \
     git \
