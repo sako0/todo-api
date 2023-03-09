@@ -14,8 +14,8 @@ func TestTodoUsecase(t *testing.T) {
 
 	mockTodoRepository := mock.NewMockTodoRepository(ctrl)
 	mockTodoRepository.EXPECT().PostTodo("test").Return(nil)
-	mockTodoRepository.EXPECT().ListTodo().Return([]model.Todo{})
-	mockTodoRepository.EXPECT().GetTodoById(uint(1)).Return(model.Todo{})
+	mockTodoRepository.EXPECT().ListTodo().Return([]model.Todo{}, nil)
+	mockTodoRepository.EXPECT().GetTodoById(uint(1)).Return(model.Todo{}, nil)
 	mockTodoRepository.EXPECT().UpdateTodoText(uint(1), "test").Return(nil)
 	mockTodoRepository.EXPECT().DeleteTodo(uint(1)).Return(nil)
 
@@ -28,16 +28,22 @@ func TestTodoUsecase(t *testing.T) {
 		}
 	})
 	t.Run("ListTodo", func(t *testing.T) {
-		todoList := tu.ListTodo()
+		todoList, err := tu.ListTodo()
 		if len(todoList) != 0 {
 			t.Errorf("unexpected length of todo list: %d", len(todoList))
+		}
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
 		}
 	})
 	t.Run("GetTodoById", func(t *testing.T) {
 		// intをuintに変更
-		todo := tu.GetTodoById(uint(1))
+		todo, err := tu.GetTodoById(uint(1))
 		if todo.ID != 0 {
 			t.Errorf("unexpected todo: %+v", todo)
+		}
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
 		}
 	})
 	t.Run("UpdateTodoText", func(t *testing.T) {
