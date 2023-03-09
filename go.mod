@@ -24,6 +24,7 @@ require (
 
 require (
 	github.com/go-playground/validator/v10 v10.11.2
+	github.com/golang/mock v1.6.0
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/labstack/echo/v4 v4.10.0
