@@ -11,43 +11,30 @@ env:
   MYSQL_PASSWORD: pass
   MYSQL_DATABASE: go_development
   MYSQL_TEST_DATABASE: go_test
-  MYSQL_HOST: mysql
-  MYSQL_PORT: 3306
 
 jobs:
   build:
     runs-on: ubuntu-latest
     services:
-      mysql:
-        image: mysql:8.0
+      db:
+        image: mysql:8.0.28
         env:
           MYSQL_ROOT_PASSWORD: pass
           MYSQL_DATABASE: go_development
-          MYSQL_TEST_DATABASE: go_test
-        ports:
-          - 3306:3306
+          MYSQL_ROOT_HOST: '%'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Go 1.18
         uses: actions/setup-go@v2
         with:
           go-version: 1.18
-        id: go
       - name: Build Docker image
         run: docker build -t go-app .
         env:
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-          MYSQL_TEST_DATABASE: ${{ env.MYSQL_TEST_DATABASE }}
-          MYSQL_HOST: ${{ env.MYSQL_HOST }}
-          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_HOST: db
+          MYSQL_PORT: 3306
       - name: Test
         run: docker run go-app sh -c "make migrate-up && make test"
         env:
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-          MYSQL_TEST_DATABASE: ${{ env.MYSQL_TEST_DATABASE }}
-          MYSQL_HOST: ${{ env.MYSQL_HOST }}
-          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_HOST: db
+          MYSQL_PORT: 3306
