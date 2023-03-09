@@ -31,29 +31,38 @@ func TestTodoRepository(t *testing.T) {
 	// テストケース
 	t.Run("PostTodo", func(t *testing.T) {
 
-		todoList := repo.ListTodo()
+		todoList, err := repo.ListTodo()
 		if len(todoList) > 0 {
 			for _, todo := range todoList {
 				repo.DeleteTodo(todo.ID)
 			}
 		}
-		err := repo.PostTodo("test")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		err = repo.PostTodo("test")
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	})
 
 	t.Run("ListTodo", func(t *testing.T) {
-		todoList := repo.ListTodo()
+		todoList, err := repo.ListTodo()
 		if len(todoList) != 1 {
 			t.Fatalf("unexpected length of todo list: %d", len(todoList))
+		}
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
 		}
 	})
 
 	t.Run("GetTodoById", func(t *testing.T) {
-		todo := repo.GetTodoById(1)
+		todo, err := repo.GetTodoById(1)
 		if todo.ID != 1 || todo.Text != "test" {
 			t.Fatalf("unexpected todo: %+v", todo)
+		}
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
 		}
 	})
 
@@ -63,9 +72,12 @@ func TestTodoRepository(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		todo := repo.GetTodoById(1)
+		todo, err := repo.GetTodoById(1)
 		if todo.Text != "updated" {
 			t.Fatalf("unexpected todo text: %s", todo.Text)
+		}
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
 		}
 	})
 
@@ -75,9 +87,12 @@ func TestTodoRepository(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		todoList := repo.ListTodo()
+		todoList, err := repo.ListTodo()
 		if len(todoList) != 0 {
 			t.Fatalf("unexpected length of todo list: %d", len(todoList))
+		}
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
 		}
 	})
 }
