@@ -15,8 +15,8 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN go mod tidy
+RUN cd /go/src/app && go mod tidy
 
 EXPOSE 5000
 
-CMD ["/go/bin/app"]
+CMD ["go", "run", "main.go"]
