@@ -30,8 +30,6 @@ jobs:
           --name db
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
       - name: Build Docker image
         run: docker build -t go-app .
       - name: Run migrations and tests
