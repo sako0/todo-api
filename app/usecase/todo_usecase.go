@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/sako0/todo-api/app/domain/model"
 	"github.com/sako0/todo-api/app/domain/repository"
 )
@@ -18,7 +16,6 @@ func NewTodoUsecase(tr repository.TodoRepository) TodoUsecase {
 func (tu TodoUsecase) PostTodo(text string) error {
 	err := tu.todoRepository.PostTodo(text)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	return nil

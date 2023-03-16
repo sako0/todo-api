@@ -29,14 +29,14 @@ func (tr todoRepository) ListTodo() ([]model.Todo, error) {
 
 func (tr todoRepository) DeleteTodo(id uint) error {
 	db := tr.Conn
-	db.Delete(&model.Todo{}, id)
-	return nil
+	tx := db.Delete(&model.Todo{}, id)
+	return tx.Error
 }
 
 func (tr todoRepository) UpdateTodoText(id uint, text string) error {
 	db := tr.Conn
-	db.Model(&model.Todo{}).Where("id = ?", id).Update("text", text)
-	return nil
+	tx := db.Model(&model.Todo{}).Where("id = ?", id).Update("text", text)
+	return tx.Error
 }
 
 func (tr todoRepository) GetTodoById(id uint) (model.Todo, error) {
