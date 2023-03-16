@@ -12,6 +12,7 @@ ENV GO111MODULE=on
 # 必要な依存関係をインストール
 RUN apt-get update && apt-get install -y \
     git \
+    make \
     && rm -rf /var/lib/apt/lists/*
 
 # ホストのファイルをコンテナの作業ディレクトリに移行
@@ -21,6 +22,9 @@ COPY . /go/src/app
 RUN go mod download && go build -o /go/bin/app ./cmd/api
 
 EXPOSE 5000
+
+# 新しいエントリーポイント
+ENTRYPOINT ["/bin/bash", "-c"]
 
 # アプリケーションの起動
 CMD ["/go/bin/app"]
