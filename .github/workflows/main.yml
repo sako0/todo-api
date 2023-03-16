@@ -22,6 +22,12 @@ jobs:
           MYSQL_ROOT_PASSWORD: pass
           MYSQL_DATABASE: go_development
           MYSQL_ROOT_HOST: '%'
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+          --name db
     steps:
       - uses: actions/checkout@v2
       - name: Set up Go 1.18
@@ -31,6 +37,13 @@ jobs:
       - name: Build Docker image
         run: docker build -t go-app .
       - name: Test
-        run: docker run -e "MYSQL_USER=root" -e "MYSQL_PASSWORD=pass" -e "MYSQL_DATABASE=go_development" -e "MYSQL_TEST_DATABASE=go_test" -e "MYSQL_HOST=$MYSQL_HOST" -e "MYSQL_PORT=3306" go-app sh -c "make migrate-up && make test"
-        env:
-          MYSQL_HOST: db
+        run: |
+          docker run \
+            --network="service:db" \
+            -e "MYSQL_USER=root" \
+            -e "MYSQL_PASSWORD=pass" \
+            -e "MYSQL_DATABASE=go_development" \
+            -e "MYSQL_TEST_DATABASE=go_test" \
+            -e "MYSQL_HOST=db" \
+            -e "MYSQL_PORT=3306" \
+            go-app sh -c "make migrate-up && make test"
