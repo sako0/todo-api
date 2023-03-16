@@ -1,15 +1,13 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sako0/todo-api/app/config"
 	"github.com/sako0/todo-api/app/infra"
 	todo "github.com/sako0/todo-api/app/infra/mysql/todo"
 	handler "github.com/sako0/todo-api/app/interfaces/rest"
-	validator "github.com/sako0/todo-api/app/interfaces/rest"
+	"github.com/sako0/todo-api/app/interfaces/validator"
 	"github.com/sako0/todo-api/app/usecase"
 )
 
@@ -21,7 +19,7 @@ func main() {
 	// 設定読み込み
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	// データベース接続
 	db, err := infra.NewSQLConnection(cfg.AppInfo.DatabaseURL)

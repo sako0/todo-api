@@ -55,7 +55,7 @@ func (th *todoHandler) PostTodo(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusOK, "success")
+	return c.JSON(http.StatusOK, map[string]string{"message": "success"})
 }
 
 func (th *todoHandler) GetTodoById(c echo.Context) error {
@@ -65,7 +65,7 @@ func (th *todoHandler) GetTodoById(c echo.Context) error {
 	}
 	todo, err := th.todoUsecase.GetTodoById(uint(id))
 	if todo.ID == 0 {
-		return c.JSON(http.StatusInternalServerError, "レコードがありません")
+		return c.JSON(http.StatusNotFound, "レコードがありません")
 	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -78,14 +78,11 @@ func (th *todoHandler) GetTodoById(c echo.Context) error {
 func (th *todoHandler) ListTodo(c echo.Context) error {
 
 	todos, err := th.todoUsecase.ListTodo()
-	// レスポンスの構造体を定義して返す
-	res := make([]listTodoResponse, len(todos))
-	if len(todos) == 0 {
-		return c.JSON(http.StatusOK, res)
-	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
+	// レスポンスの構造体を定義して返す
+	res := make([]listTodoResponse, len(todos))
 	for i, todo := range todos {
 		res[i] = listTodoResponse{ID: todo.ID, Text: todo.Text}
 	}
@@ -101,7 +98,7 @@ func (th *todoHandler) DeleteTodo(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusOK, "success")
+	return c.JSON(http.StatusOK, map[string]string{"message": "success"})
 }
 
 func (th todoHandler) UpdateTodoText(c echo.Context) error {
@@ -120,5 +117,5 @@ func (th todoHandler) UpdateTodoText(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusOK, "success")
+	return c.JSON(http.StatusOK, map[string]string{"message": "success"})
 }
