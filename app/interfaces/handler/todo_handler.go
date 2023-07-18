@@ -7,6 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/sako0/todo-api/app/interfaces/presenter"
+	"github.com/sako0/todo-api/app/interfaces/request"
 	"github.com/sako0/todo-api/app/usecase"
 )
 
@@ -21,18 +22,15 @@ type TodoHandler interface {
 type todoHandler struct {
 	todoUsecase   usecase.TodoUsecase
 	todoPresenter presenter.TodoPresenter
+	todoRequest   request.TodoRequest
 }
 
-func NewTodoHandler(usecase usecase.TodoUsecase, presenter presenter.TodoPresenter) TodoHandler {
-	return &todoHandler{todoUsecase: usecase, todoPresenter: presenter}
-}
-
-type postTodoRequest struct {
-	Text string `json:"text" validate:"required"`
+func NewTodoHandler(usecase usecase.TodoUsecase, presenter presenter.TodoPresenter, request request.TodoRequest) TodoHandler {
+	return &todoHandler{todoUsecase: usecase, todoPresenter: presenter, todoRequest: request}
 }
 
 func (th *todoHandler) PostTodo(c echo.Context) error {
-	r := &postTodoRequest{}
+	r := &request.PostTodoRequest{}
 	if err := c.Bind(r); err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -44,10 +42,6 @@ func (th *todoHandler) PostTodo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]string{"message": "成功しました！"})
-}
-
-type updateTodoTextRequest struct {
-	Text string `json:"text" validate:"required"`
 }
 
 func (th *todoHandler) GetTodoById(c echo.Context) error {
@@ -88,7 +82,7 @@ func (th *todoHandler) DeleteTodo(c echo.Context) error {
 }
 
 func (th todoHandler) UpdateTodoText(c echo.Context) error {
-	r := &updateTodoTextRequest{}
+	r := &request.UpdateTodoTextRequest{}
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
