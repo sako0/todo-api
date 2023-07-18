@@ -1,4 +1,4 @@
-package rest
+package handler
 
 import (
 	"net/http"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/sako0/todo-api/app/interfaces/presenter"
 	"github.com/sako0/todo-api/app/usecase"
 )
 
@@ -18,29 +19,16 @@ type TodoHandler interface {
 }
 
 type todoHandler struct {
-	todoUsecase usecase.TodoUsecase
+	todoUsecase   usecase.TodoUsecase
+	todoPresenter presenter.TodoPresenter
+}
+
+func NewTodoHandler(usecase usecase.TodoUsecase, presenter presenter.TodoPresenter) TodoHandler {
+	return &todoHandler{todoUsecase: usecase, todoPresenter: presenter}
 }
 
 type postTodoRequest struct {
 	Text string `json:"text" validate:"required"`
-}
-
-type updateTodoTextRequest struct {
-	Text string `json:"text" validate:"required"`
-}
-
-type getTodoByIdResponse struct {
-	ID   uint   `json:"id"`
-	Text string `json:"text"`
-}
-
-type listTodoResponse struct {
-	ID   uint   `json:"id"`
-	Text string `json:"text"`
-}
-
-func NewTodoHandler(usecase usecase.TodoUsecase) TodoHandler {
-	return &todoHandler{todoUsecase: usecase}
 }
 
 func (th *todoHandler) PostTodo(c echo.Context) error {
@@ -55,7 +43,11 @@ func (th *todoHandler) PostTodo(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusOK, map[string]string{"message": "success"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "成功しました！"})
+}
+
+type updateTodoTextRequest struct {
+	Text string `json:"text" validate:"required"`
 }
 
 func (th *todoHandler) GetTodoById(c echo.Context) error {
@@ -67,24 +59,18 @@ func (th *todoHandler) GetTodoById(c echo.Context) error {
 	if todo.ID == 0 {
 		return c.JSON(http.StatusNotFound, "レコードがありません")
 	}
+	res, err := th.todoPresenter.GetTodoByIdResponse(todo, err)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	// レスポンスの構造体を定義して返す
-	res := getTodoByIdResponse{ID: todo.ID, Text: todo.Text}
 	return c.JSON(http.StatusOK, res)
 }
 
 func (th *todoHandler) ListTodo(c echo.Context) error {
-
 	todos, err := th.todoUsecase.ListTodo()
+	res, err := th.todoPresenter.ListTodoResponse(todos, err)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-	// レスポンスの構造体を定義して返す
-	res := make([]listTodoResponse, len(todos))
-	for i, todo := range todos {
-		res[i] = listTodoResponse{ID: todo.ID, Text: todo.Text}
 	}
 	return c.JSON(http.StatusOK, res)
 }

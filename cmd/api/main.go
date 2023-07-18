@@ -6,7 +6,8 @@ import (
 	"github.com/sako0/todo-api/app/config"
 	"github.com/sako0/todo-api/app/infra"
 	todo "github.com/sako0/todo-api/app/infra/mysql/todo"
-	handler "github.com/sako0/todo-api/app/interfaces/rest"
+	"github.com/sako0/todo-api/app/interfaces/handler"
+	"github.com/sako0/todo-api/app/interfaces/presenter"
 	"github.com/sako0/todo-api/app/interfaces/validator"
 	"github.com/sako0/todo-api/app/usecase"
 )
@@ -29,7 +30,8 @@ func main() {
 
 	tr := todo.NewTodoRepository(db)
 	tu := usecase.NewTodoUsecase(tr)
-	th := handler.NewTodoHandler(tu)
+	tp := presenter.NewTodoPresenter(tu)
+	th := handler.NewTodoHandler(tu, tp)
 
 	// todoリストの更新
 	e.POST("/todo", th.PostTodo)
